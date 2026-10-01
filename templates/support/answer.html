@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Solution for: {{ user_question }} — AI Technical Support{% endblock %}
+
+{% block content %}
+<!-- User Question Banner -->
+<div class="question-banner">
+    <div class="question-meta">
+        <span class="question-label-tag">Technical Query</span>
+        <span style="color: var(--text-subtle);">&bull;</span>
+        <span class="article-category-badge" style="margin-bottom:0;">Category: {{ primary_category }}</span>
+        <span style="color: var(--text-subtle);">&bull;</span>
+        <span style="color: var(--text-muted); font-size: 0.85rem;">{{ article_count }} Database Reference Article{% if article_count != 1 %}s{% endif %} Matched</span>
+    </div>
+    <h1 class="question-text">&ldquo;{{ user_question }}&rdquo;</h1>
+</div>
+
+<!-- Main Answer Container -->
+<div class="answer-container">
+    <!-- Left Column: Gemini AI Solution -->
+    <div class="main-solution-column">
+        <div class="ai-response-card">
+            <div class="ai-header">
+                <div class="ai-badge">
+                    <svg class="ai-sparkle" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"></path>
+                    </svg>
+                    <span>AI Generated Solution</span>
+                </div>
+                <span class="source-tag">{{ ai_result.source }}</span>
+            </div>
+
+            <!-- Solution Content -->
+            <div class="solution-content">
+                {{ ai_result.explanation|linebreaks }}
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+            <a href="{% url 'home' %}" class="suggestion-pill" style="padding: 0.75rem 1.5rem; font-size: 0.95rem;">
+                &larr; Ask Another Technical Question
+            </a>
+        </div>
+    </div>
+
+    <!-- Right Column: Database Knowledge Base References -->
+    <div class="sidebar-column">
+        <div class="sidebar-card">
+            <h2 class="sidebar-title">
+                📚 Related Knowledge Articles
+            </h2>
+
+            {% for art in related_articles %}
+            <div class="sidebar-item" id="related-article-{{ art.pk }}">
+                <span class="article-category-badge" style="font-size: 0.7rem; padding: 0.15rem 0.5rem;">{{ art.category }}</span>
+                <a href="{% url 'article_detail' art.pk %}" class="sidebar-item-title">{{ art.title }}</a>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.2rem 0 0.4rem;">
+                    {{ art.problem|truncatewords:15 }}
+                </p>
+                <div class="sidebar-item-meta">
+                    <span>Keywords: {{ art.keywords }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div style="padding: 1rem 0; text-align: center; color: var(--text-subtle); font-size: 0.9rem;">
+                No exact database match found.<br>Showing general AI advice above.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

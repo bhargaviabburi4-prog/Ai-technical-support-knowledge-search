@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }} — Knowledge Base{% endblock %}
+
+{% block content %}
+<!-- Back link -->
+<div style="margin-bottom: 1.5rem;">
+    <a href="{% url 'article_list' %}" class="suggestion-pill" style="padding: 0.5rem 1rem;">
+        &larr; Back to Directory
+    </a>
+</div>
+
+<div class="answer-container">
+    <div class="main-solution-column">
+        <div class="ai-response-card" style="padding: 2.5rem;">
+            <div style="margin-bottom: 1.25rem;">
+                <span class="article-category-badge">{{ article.category }}</span>
+                <h1 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: white; margin-top: 0.5rem;">
+                    {{ article.title }}
+                </h1>
+                <div style="font-size: 0.85rem; color: var(--text-subtle); margin-top: 0.5rem;">
+                    Indexed on {{ article.created_at|date:"F d, Y" }} &bull; Last updated {{ article.updated_at|date:"F d, Y" }}
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: #818cf8; margin-bottom: 0.6rem;">
+                    Problem Symptoms
+                </h3>
+                <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; border-left: 3px solid var(--cyan);">
+                    {{ article.problem }}
+                </p>
+
+                <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: #818cf8; margin-bottom: 0.6rem;">
+                    Recommended Solution Steps
+                </h3>
+                <div class="solution-content" style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                    {{ article.solution|linebreaks }}
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: var(--text-subtle);">
+                    <strong>Keywords Tagged:</strong> <code>{{ article.keywords }}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Related Articles -->
+    <div class="sidebar-column">
+        <div class="sidebar-card">
+            <h2 class="sidebar-title">More in {{ article.category }}</h2>
+            {% for rel in related_articles %}
+            <div class="sidebar-item">
+                <a href="{% url 'article_detail' rel.pk %}" class="sidebar-item-title">{{ rel.title }}</a>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">{{ rel.problem|truncatewords:10 }}</p>
+            </div>
+            {% empty %}
+            <p style="font-size: 0.85rem; color: var(--text-subtle);">No other articles in this category yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
